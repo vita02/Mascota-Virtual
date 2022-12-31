@@ -2,7 +2,7 @@ package mascota;
 
 public class RatoncitoFiuFiu {
 
-    private String name;
+    private String nombre;
     private int edad;
     private int peso;
     private byte hambre; // 0-10
@@ -12,6 +12,12 @@ public class RatoncitoFiuFiu {
 
     public RatoncitoFiuFiu(String nombre, int peso, byte hambre, byte suciedad, byte salud, byte energia) {
         // Un objeto mascota.RatoncitoFiuFiu debería informar cuando nace...
+        this.nombre = nombre;
+        this.peso = peso;
+        this.hambre = hambre;
+        this.suciedad = suciedad;
+        this.salud = salud;
+        this.energia = energia;
     }
 
 
@@ -21,7 +27,7 @@ public class RatoncitoFiuFiu {
         sb.append("\nHambre: ").append(hambre);
         sb.append("\nSuciedad: ").append(suciedad);
         sb.append("\nSalud: ").append(salud);
-        sb.append("\nEgnergía: ").append(energia);
+        sb.append("\nEnergía: ").append(energia);
 
         return sb.toString();
     }
@@ -43,18 +49,31 @@ public class RatoncitoFiuFiu {
     }
 
     public boolean estasEnfermo() {
-        return false;
+        return salud <= 20;
     }
 
     public boolean estasSucio() {
-        return false;
+        return suciedad >= 80;
+    }
+
+    public boolean tieneHambre(){
+        return hambre >= 8;
+    }
+
+    public boolean estasFeliz(){
+        return !tieneHambre() && !estasEnfermo() && ! estasSucio();
     }
 
     public boolean estasMuerto() {
-        return false;
+        return salud == 0;
     }
 
-    public void envejecer(int i) {
+    public void envejecer(int segundos) {
+        edad += segundos;
+        hambre++;
+        suciedad++;
+        salud--;
+        energia--;
     }
 
     public boolean tienesQuejas() {
