@@ -68,6 +68,7 @@ public class DuenoIGU extends JFrame {
 
                 if (!mascota.tienesQuejas() || muerto) {
                     if (despiertoEnfermoSucio) {
+                        labelSalida.setText("Estoy malito...");
                         ruta1 = rutaImagenes + "/despierto-enfermo-sucio-" + tramoEdad.toString() + "-00.gif";
                         ruta2 = rutaImagenes + "/despierto-enfermo-sucio-" + tramoEdad.toString() + "-01.gif";
                     } else if (despiertoSucio) {
@@ -86,6 +87,7 @@ public class DuenoIGU extends JFrame {
                         ruta1 = rutaImagenes + "/dormido-sucio-" + tramoEdad.toString() + "-00.gif";
                         ruta2 = rutaImagenes + "/dormido-sucio-" + tramoEdad.toString() + "-01.gif";
                     } else if (dormidoEnfermo) {
+                        labelSalida.setText("Estoy malito...");
                         ruta1 = rutaImagenes + "/dormido-enfermo-" + tramoEdad.toString() + "-00.gif";
                         ruta2 = rutaImagenes + "/dormido-enfermo-" + tramoEdad.toString() + "-01.gif";
                     } else if (dormido) {
@@ -95,14 +97,17 @@ public class DuenoIGU extends JFrame {
                     if (muerto) {
                         ruta1 = rutaImagenes + "/muerto.gif";
                         ruta2 = rutaImagenes + "/muerto.gif";
+                        labelSalida.setText(mascota.getName() + " ha muerto...");
                     }
                 } else {
-                    if (mascota.estasSucio()) {
+                    if (sucio) {
                         ruta1 = rutaImagenes + "/quejarse-sucio-" + tramoEdad.toString() + "-00.gif";
                         ruta2 = rutaImagenes + "/quejarse-sucio-" + tramoEdad.toString() + "-01.gif";
+                        labelSalida.setText("Estoy sucio!");
                     } else {
                         ruta1 = rutaImagenes + "/quejarse-" + tramoEdad.toString() + "-00.gif";
                         ruta2 = rutaImagenes + "/quejarse-" + tramoEdad.toString() + "-01.gif";
+                        labelSalida.setText("Tengo hambre!");
                     }
                 }
 
@@ -130,7 +135,13 @@ public class DuenoIGU extends JFrame {
         }
 
         public void run() {
-            mascota.envejecer(1);
+            if (!mascota.estasMuerto()) {
+                mascota.envejecer(1);
+            } else {
+                botonAlimentar.setEnabled(false);
+                botonCurar.setEnabled(false);
+                botonLimpiar.setEnabled(false);
+            }
             if (System.currentTimeMillis() - horaAnterior >= 5000)
                 labelSalida.setText("");
             if (System.currentTimeMillis() - horaAnterior >= 1000 && mascota.tienesQuejas())
@@ -141,7 +152,9 @@ public class DuenoIGU extends JFrame {
 
     //Construir el marco
     public DuenoIGU() {
-        mascota = new RatoncitoFiuFiu("Nombre", 50, (byte)50, (byte)50, (byte)15, (byte)100);
+        String nombre = "Ratatouille";
+        mascota = new RatoncitoFiuFiu(nombre, 50, (byte) 50, (byte) 50, (byte) 100, (byte) 100);
+        labelSalida.setText("Hola! Soy " + nombre);
         temporizador = new Timer();
         temporizador.schedule(new Envejecimiento(mascota, labelGrafica), 0, 500);
         horaAnterior = System.currentTimeMillis();
@@ -150,7 +163,7 @@ public class DuenoIGU extends JFrame {
         enableEvents(AWTEvent.WINDOW_EVENT_MASK);
         try {
             jbInit();
-            this.setTitle("mascota.RatoncitoFiuFiu : ratatouille");
+            this.setTitle("mascota.RatoncitoFiuFiu : " + nombre);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -225,16 +238,19 @@ public class DuenoIGU extends JFrame {
     void botonAlimentar_mouseClicked(MouseEvent e) {
         // Aqui alimentamos a la mascota
         mascota.alimentar(15);
+        labelSalida.setText("");
     }
 
     void botonCurar_mouseClicked(MouseEvent e) {
         //Aqu� curamos a la mascota
         mascota.curar(15);
+        labelSalida.setText("");
     }
 
     void botonLimpiar_mouseClicked(MouseEvent e) {
         //Aquí limpiamos a la mascota
         mascota.limpiar(15);
+        labelSalida.setText("");
     }
 
     void botonEstadisticas_mouseClicked(MouseEvent e) {

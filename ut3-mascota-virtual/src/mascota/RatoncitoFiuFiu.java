@@ -1,5 +1,7 @@
 package mascota;
 
+import java.util.Random;
+
 public class RatoncitoFiuFiu {
 
     private String nombre;
@@ -10,10 +12,10 @@ public class RatoncitoFiuFiu {
     private byte salud;
     private byte energia;
     private boolean dormido;
-
-    private static final int INFANCIA = 10;//2500;
-    private static final int ADULTA = 20;//8000;
-    private static final int VEJEZ = 300;//13450;
+    static Random rn = new Random();
+    private static final int INFANCIA = rn.nextInt((2600 - 2400)) + 2400; //2500;
+    private static final int ADULTA = rn.nextInt((8100 - 7900)) + 7900; //8000;
+    private static final int VEJEZ = rn.nextInt((13500 - 13300)) + 13300; //13450;
     private static final int MIN_PESO = 5;
 
     public RatoncitoFiuFiu(String nombre, int peso, byte hambre, byte suciedad, byte salud, byte energia) {
@@ -27,6 +29,10 @@ public class RatoncitoFiuFiu {
         dormido = false;
     }
 
+    public String getName() {
+        return nombre;
+    }
+
 
     public String estadisticas() {
         StringBuilder sb = new StringBuilder();
@@ -35,8 +41,6 @@ public class RatoncitoFiuFiu {
         sb.append("\nSuciedad: ").append(suciedad);
         sb.append("\nSalud: ").append(salud);
         sb.append("\nEnergía: ").append(energia);
-        sb.append("\nEdad: ").append(edad);
-
         return sb.toString();
     }
 
@@ -76,7 +80,7 @@ public class RatoncitoFiuFiu {
     }
 
     public boolean estasFeliz() {
-        return !tieneHambre() && !estasEnfermo() && !estasSucio();
+        return !tieneHambre() && !estasSucio();
     }
 
     public boolean estasMuerto() {
@@ -85,6 +89,7 @@ public class RatoncitoFiuFiu {
 
     public void envejecer(int segundos) {
         edad += segundos;
+
         ganarPeso(-1);
         alimentar(-1);
         modificarSuciedad(1);
@@ -101,23 +106,26 @@ public class RatoncitoFiuFiu {
     }
 
     public void alimentar(float cantidadAlimento) {
+        if (tieneHambre()) { // mejora su salud si come con hambre
+            aumentarSalud(rn.nextInt((3 - 1) + 1) + 1);
+        }
+
         if (hambre - cantidadAlimento >= 0 && hambre + cantidadAlimento <= 100) {
             hambre -= cantidadAlimento;
         } else {
             hambre = 0;
+            salud = 20; // enferma si se empacha
         }
-        ganarPeso(cantidadAlimento);
+        if (!estasEnfermo()) { // solo gana peso si está sano
+            ganarPeso(1);
+        }
+
     }
 
     public void curar(float cantidadMedicina) {
         aumentarSalud(cantidadMedicina);
     }
 
-    private void ganarPeso(float cantidad) {
-        if (peso >= MIN_PESO) {
-            peso += cantidad;
-        }
-    }
 
     private void aumentarEnergia(float cantidad) {
         energia += cantidad;
@@ -125,6 +133,24 @@ public class RatoncitoFiuFiu {
             dormido = true;
         } else if (energia >= 75) {
             dormido = false;
+        }
+    }
+
+    /**
+     * Incrementa o decrementa un valor random ([1-3]) para que el peso no se comporte igual que el hambre
+     *
+     * @param pn positivo o negativo (para poder ser invocado tanto desde envejecer como desde almientar)
+     */
+    private void ganarPeso(int pn) {
+        int cantidad = rn.nextInt((3 - 1) + 1) + 1;
+        if (pn > 0) {
+            peso += cantidad;
+        } else {
+            if (peso - cantidad >= MIN_PESO) {
+                peso -= cantidad;
+            } else {
+                peso = MIN_PESO;
+            }
         }
     }
 
