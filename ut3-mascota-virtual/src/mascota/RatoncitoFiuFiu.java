@@ -5,15 +5,15 @@ public class RatoncitoFiuFiu {
     private String nombre;
     private int edad;
     private int peso;
-    private byte hambre; // 0-10
-    private byte suciedad; // 0-100
-    private byte salud; // 0-100
-    private byte energia; // 0-100
+    private byte hambre;
+    private byte suciedad;
+    private byte salud;
+    private byte energia;
     private boolean dormido;
 
-    private static final int INFANCIA = 2500;
-    private static final int ADULTA = 2500;
-    private static final int VEJEZ = 8000;
+    private static final int INFANCIA = 10;//2500;
+    private static final int ADULTA = 20;//8000;
+    private static final int VEJEZ = 300;//13450;
     private static final int MIN_PESO = 5;
 
     public RatoncitoFiuFiu(String nombre, int peso, byte hambre, byte suciedad, byte salud, byte energia) {
@@ -35,16 +35,13 @@ public class RatoncitoFiuFiu {
         sb.append("\nSuciedad: ").append(suciedad);
         sb.append("\nSalud: ").append(salud);
         sb.append("\nEnergía: ").append(energia);
+        sb.append("\nEdad: ").append(edad);
 
         return sb.toString();
     }
 
     public void limpiar(float esfuerzoHigienico) {
-        if (suciedad - esfuerzoHigienico >= 0) {
-            suciedad -= esfuerzoHigienico;
-        } else {
-            suciedad = 0;
-        }
+        modificarSuciedad(-esfuerzoHigienico);
     }
 
     public int queTramoEdad() {
@@ -83,16 +80,16 @@ public class RatoncitoFiuFiu {
     }
 
     public boolean estasMuerto() {
-        return salud == 0 || edad > VEJEZ;
+        return salud <= 0 || edad > VEJEZ;
     }
 
     public void envejecer(int segundos) {
         edad += segundos;
         ganarPeso(-1);
         alimentar(-1);
-        suciedad++;
-        salud--;
-        if (estasDormido()){
+        modificarSuciedad(1);
+        aumentarSalud(-1);
+        if (estasDormido()) {
             aumentarEnergia(1);
         } else {
             aumentarEnergia(-1);
@@ -132,10 +129,20 @@ public class RatoncitoFiuFiu {
     }
 
     private void aumentarSalud(float cantidad) {
-        if (salud + cantidad <= 100) {
+        if (salud + cantidad <= 100 && salud + cantidad >= 0) {
             salud += cantidad;
         } else {
-            salud = 100;
+            if (cantidad > 0) {
+                salud = 100;
+            } else {
+                salud = 0;
+            }
+        }
+    }
+
+    private void modificarSuciedad(float cantidad) {
+        if (suciedad + cantidad <= 100 && suciedad + cantidad >= 0) {
+            suciedad += cantidad;
         }
     }
 }
