@@ -21,6 +21,7 @@ public class DuenoIGU extends JFrame {
     private JButton botonLimpiar = new JButton();
     private JButton botonCurar = new JButton();
     private JButton botonAlimentar = new JButton();
+    private JButton botonJugar = new JButton();
     private TitledBorder titledBorder1;
     private JSplitPane jSplitPane1 = new JSplitPane();
     private JLabel labelGrafica = new JLabel();
@@ -75,6 +76,7 @@ public class DuenoIGU extends JFrame {
                         ruta1 = rutaImagenes + "/despierto-sucio-" + tramoEdad.toString() + "-00.gif";
                         ruta2 = rutaImagenes + "/despierto-sucio-" + tramoEdad.toString() + "-01.gif";
                     } else if (despiertoEnfermo) {
+                        labelSalida.setText("Estoy malito...");
                         ruta1 = rutaImagenes + "/despierto-enfermo-" + tramoEdad.toString() + "-00.gif";
                         ruta2 = rutaImagenes + "/despierto-enfermo-" + tramoEdad.toString() + "-01.gif";
                     } else if (despierto) {
@@ -141,6 +143,7 @@ public class DuenoIGU extends JFrame {
                 botonAlimentar.setEnabled(false);
                 botonCurar.setEnabled(false);
                 botonLimpiar.setEnabled(false);
+                botonJugar.setEnabled(false);
             }
             if (System.currentTimeMillis() - horaAnterior >= 5000)
                 labelSalida.setText("");
@@ -153,7 +156,7 @@ public class DuenoIGU extends JFrame {
     //Construir el marco
     public DuenoIGU() {
         String nombre = "Ratatouille";
-        mascota = new RatoncitoFiuFiu(nombre, 50, (byte) 50, (byte) 50, (byte) 100, (byte) 100);
+        mascota = new RatoncitoFiuFiu(nombre, 50, (byte) 50, (byte) 50, (byte) 100, (byte) 100, (byte) 100);
         labelSalida.setText("Hola! Soy " + nombre);
         temporizador = new Timer();
         temporizador.schedule(new Envejecimiento(mascota, labelGrafica), 0, 500);
@@ -205,6 +208,12 @@ public class DuenoIGU extends JFrame {
                 botonAlimentar_mouseClicked(e);
             }
         });
+        botonJugar.setText("Jugar");
+        botonJugar.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                botonJugar_mouseClicked(e);
+            }
+        });
         jSplitPane1.setOrientation(JSplitPane.VERTICAL_SPLIT);
         jSplitPane1.setBorder(null);
         jSplitPane1.setBottomComponent(labelGrafica);
@@ -219,6 +228,7 @@ public class DuenoIGU extends JFrame {
         jToolBar1.add(botonAlimentar, null);
         jToolBar1.add(botonCurar, null);
         jToolBar1.add(botonLimpiar, null);
+        jToolBar1.add(botonJugar, null); ///////////////
         jToolBar1.add(botonEstadisticas, null);
         contentPane.add(jSplitPane1, BorderLayout.CENTER);
         jSplitPane1.add(labelGrafica, JSplitPane.RIGHT);
@@ -250,6 +260,12 @@ public class DuenoIGU extends JFrame {
     void botonLimpiar_mouseClicked(MouseEvent e) {
         //Aquí limpiamos a la mascota
         mascota.limpiar(15);
+        labelSalida.setText("");
+    }
+
+    void botonJugar_mouseClicked(MouseEvent e) {
+        //Aquí jugamos con la mascota
+        mascota.jugar(15);
         labelSalida.setText("");
     }
 
