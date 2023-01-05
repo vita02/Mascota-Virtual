@@ -68,12 +68,16 @@ public class DuenoIGU extends JFrame {
                 ruta1 = "";
                 ruta2 = "";
 
-                if (jugando) {
+                if (muerto) {
+                    ruta1 = rutaImagenes + "/muerto.gif";
+                    ruta2 = rutaImagenes + "/muerto.gif";
+                    labelSalida.setText(mascota.getName() + " ha muerto...");
+                } else if (jugando) {
                     ruta1 = rutaImagenes + "/jugar.png";
                     ruta2 = rutaImagenes + "/jugar.png";
                     labelSalida.setText("Jugando");
                     mascota.setJugar(false);
-                } else if (!mascota.tienesQuejas() || muerto) {
+                } else if (!mascota.tienesQuejas() || enfermo) {
                     if (despiertoEnfermoSucio) {
                         labelSalida.setText("Estoy malito...");
                         ruta1 = rutaImagenes + "/despierto-enfermo-sucio-" + tramoEdad.toString() + "-00.gif";
@@ -102,11 +106,6 @@ public class DuenoIGU extends JFrame {
                         ruta1 = rutaImagenes + "/dormido-" + tramoEdad.toString() + "-00.gif";
                         ruta2 = rutaImagenes + "/dormido-" + tramoEdad.toString() + "-01.gif";
                     }
-                    if (muerto) {
-                        ruta1 = rutaImagenes + "/muerto.gif";
-                        ruta2 = rutaImagenes + "/muerto.gif";
-                        labelSalida.setText(mascota.getName() + " ha muerto...");
-                    }
                 } else {
                     if (sucio) {
                         ruta1 = rutaImagenes + "/quejarse-sucio-" + tramoEdad.toString() + "-00.gif";
@@ -116,6 +115,9 @@ public class DuenoIGU extends JFrame {
                         ruta1 = rutaImagenes + "/quejarse-" + tramoEdad.toString() + "-00.gif";
                         ruta2 = rutaImagenes + "/quejarse-" + tramoEdad.toString() + "-01.gif";
                         labelSalida.setText("Tengo hambre!");
+                    }
+                    if (enfermo){
+
                     }
                 }
 
@@ -162,7 +164,7 @@ public class DuenoIGU extends JFrame {
     //Construir el marco
     public DuenoIGU() {
         String nombre = "Ratatouille";
-        mascota = new RatoncitoFiuFiu(nombre, 50, (byte) 50, (byte) 50, (byte) 100, (byte) 100, (byte) 100);
+        mascota = new RatoncitoFiuFiu(nombre, 50, (byte) 50, (byte) 50, (byte) 40, (byte) 100, (byte) 100);
         labelSalida.setText("Hola! Soy " + nombre);
         temporizador = new Timer();
         temporizador.schedule(new Envejecimiento(mascota, labelGrafica), 0, 500);

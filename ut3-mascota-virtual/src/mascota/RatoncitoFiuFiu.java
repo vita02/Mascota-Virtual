@@ -19,9 +19,13 @@ public class RatoncitoFiuFiu {
     private static final int ADULTA = rn.nextInt((8100 - 7900)) + 7900; //8000;
     private static final int VEJEZ = rn.nextInt((13500 - 13300)) + 13300; //13450;
     private static final int MIN_PESO = 5;
+    private static final int MAXIMO_ENERGIA_DORMIR = 75;
+    private static final int MINIMO_ENERGIA_DORMIR = 40;
     private static final int RITMO_ENVEJECIMIENTO = 1;
     private static final int ENERGIA_JUGAR = 10;
-    private static final int FELICIDAD_JUGAR = 20;
+    private static final int SALUD_ALIMENTAR = 10;
+    private static final int LIMITE_HAMBRE = 10;
+    private static final int LIMITE_SALUD = 90;
     private static final int HAMBRE_JUGAR = 5;
 
     public RatoncitoFiuFiu(String nombre, int peso, byte hambre, byte suciedad, byte salud, byte energia, byte felicidad) {
@@ -39,7 +43,7 @@ public class RatoncitoFiuFiu {
         return nombre;
     }
 
-    public void setJugar(boolean b){
+    public void setJugar(boolean b) {
         jugando = b;
     }
 
@@ -66,9 +70,9 @@ public class RatoncitoFiuFiu {
     }
 
     public boolean estasDormido() {
-        if (energia <= 50) {
+        if (energia <= MINIMO_ENERGIA_DORMIR) {
             dormido = true;
-        } else if (energia >= 75) {
+        } else if (energia >= MAXIMO_ENERGIA_DORMIR) {
             dormido = false;
         }
         return dormido;
@@ -90,7 +94,7 @@ public class RatoncitoFiuFiu {
         return salud <= 0 || edad > VEJEZ;
     }
 
-    public boolean estaJugando(){
+    public boolean estaJugando() {
         return jugando;
     }
 
@@ -113,30 +117,48 @@ public class RatoncitoFiuFiu {
     public void envejecer(int segundos) {
         edad += segundos;
         ganarPeso(-RITMO_ENVEJECIMIENTO);
+        if (estasEnfermo()) {
+            ganarPeso(-RITMO_ENVEJECIMIENTO);
+        } // si está enferma pierde más peso
         alimentar(-RITMO_ENVEJECIMIENTO);
         modificarSuciedad(RITMO_ENVEJECIMIENTO);
         aumentarSalud(-RITMO_ENVEJECIMIENTO);
+        if (estasSucio()){
+            aumentarSalud(-RITMO_ENVEJECIMIENTO);
+        } // si está sucia enferma más rápido
         if (estasDormido()) {
             aumentarEnergia(RITMO_ENVEJECIMIENTO);
         } else {
             aumentarEnergia(-RITMO_ENVEJECIMIENTO);
         }
-        if (tienesQuejas() || estasEnfermo()){
-            modificarFelicidad(-RITMO_ENVEJECIMIENTO);
-        }
+        if (tienesQuejas() || estasEnfermo()) {
+            deprimir();
+        } // si esta sucia o enferma no puede ser feliz
+    }
+
+    private void deprimir() {
+        felicidad = 30;
     }
 
 
     public void alimentar(float cantidadAlimento) {
-        if (tieneHambre()) { // mejora su salud si come con hambre
-            aumentarSalud(rn.nextInt((3 - 1) + 1) + 1);
+        if (tieneHambre() && cantidadAlimento > 0) { // mejora su salud si come con hambre
+            aumentarSalud(SALUD_ALIMENTAR);
         }
 
-        if (hambre - cantidadAlimento >= 0 && hambre + cantidadAlimento <= 100) {
+        if (hambre - cantidadAlimento >= 0 && hambre - cantidadAlimento <= 100) {
             hambre -= cantidadAlimento;
         } else {
+            if (cantidadAlimento > 0) {
+                hambre = 0;
+            } else {
+                hambre = 100;
+            }
+        }
+
+        if (hambre + cantidadAlimento <= LIMITE_HAMBRE) {
             hambre = 0;
-            if (salud > 20){
+            if (salud > 20) {
                 salud = 20;
             } else {
                 aumentarSalud(-5);
@@ -145,7 +167,6 @@ public class RatoncitoFiuFiu {
         if (!estasEnfermo()) { // solo gana peso si está sano
             ganarPeso(1);
         }
-
     }
 
     public void curar(float cantidadMedicina) {
@@ -186,6 +207,8 @@ public class RatoncitoFiuFiu {
     private void aumentarSalud(float cantidad) {
         if (salud + cantidad <= 100 && salud + cantidad >= 0) {
             salud += cantidad;
+        } else if (salud + cantidad >= LIMITE_SALUD) {
+
         } else {
             if (cantidad > 0) {
                 salud = 100;
@@ -201,7 +224,7 @@ public class RatoncitoFiuFiu {
         }
     }
 
-    private void modificarFelicidad(float cantidad){
+    private void modificarFelicidad(float cantidad) {
         if (felicidad + cantidad <= 100 && felicidad + cantidad >= 0) {
             felicidad += cantidad;
         }
