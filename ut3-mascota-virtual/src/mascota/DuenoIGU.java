@@ -48,7 +48,7 @@ public class DuenoIGU extends JFrame {
             Integer tramoEdad = mascota.queTramoEdad();
             String rutaImagenes;
             URL URLruta1, URLruta2;
-            boolean despierto, sucio, enfermo, despiertoSucio, despiertoEnfermo, despiertoEnfermoSucio, dormido, dormidoSucio, dormidoEnfermo, dormidoEnfermoSucio, muerto;
+            boolean despierto, sucio, enfermo, despiertoSucio, despiertoEnfermo, despiertoEnfermoSucio, dormido, dormidoSucio, dormidoEnfermo, dormidoEnfermoSucio, muerto, jugando;
 
             despierto = !mascota.estasDormido();
             dormido = !despierto;
@@ -61,13 +61,19 @@ public class DuenoIGU extends JFrame {
             dormidoEnfermo = dormido && enfermo;
             dormidoEnfermoSucio = dormidoSucio && dormidoEnfermo;
             muerto = mascota.estasMuerto();
+            jugando = mascota.estaJugando();
 
             try {
                 rutaImagenes = getClass().getResource("../imagenes").toString();
                 ruta1 = "";
                 ruta2 = "";
 
-                if (!mascota.tienesQuejas() || muerto) {
+                if (jugando) {
+                    ruta1 = rutaImagenes + "/jugar.png";
+                    ruta2 = rutaImagenes + "/jugar.png";
+                    labelSalida.setText("Jugando");
+                    mascota.setJugar(false);
+                } else if (!mascota.tienesQuejas() || muerto) {
                     if (despiertoEnfermoSucio) {
                         labelSalida.setText("Estoy malito...");
                         ruta1 = rutaImagenes + "/despierto-enfermo-sucio-" + tramoEdad.toString() + "-00.gif";
@@ -266,7 +272,6 @@ public class DuenoIGU extends JFrame {
     void botonJugar_mouseClicked(MouseEvent e) {
         //Aquí jugamos con la mascota
         mascota.jugar(15);
-        labelSalida.setText("");
     }
 
     void botonEstadisticas_mouseClicked(MouseEvent e) {

@@ -13,6 +13,7 @@ public class RatoncitoFiuFiu {
     private byte energia;
     private byte felicidad;
     private boolean dormido;
+    private boolean jugando;
     static Random rn = new Random();
     private static final int INFANCIA = rn.nextInt((2600 - 2400)) + 2400; //2500;
     private static final int ADULTA = rn.nextInt((8100 - 7900)) + 7900; //8000;
@@ -36,6 +37,10 @@ public class RatoncitoFiuFiu {
 
     public String getName() {
         return nombre;
+    }
+
+    public void setJugar(boolean b){
+        jugando = b;
     }
 
     public String estadisticas() {
@@ -85,6 +90,10 @@ public class RatoncitoFiuFiu {
         return salud <= 0 || edad > VEJEZ;
     }
 
+    public boolean estaJugando(){
+        return jugando;
+    }
+
     /**
      * Devuelve el atributo felicidad, que cuantifica el nivel de felicidad en vez
      * de las necesidades de la mascota.
@@ -127,7 +136,11 @@ public class RatoncitoFiuFiu {
             hambre -= cantidadAlimento;
         } else {
             hambre = 0;
-            salud = 20; // enferma si se empacha
+            if (salud > 20){
+                salud = 20;
+            } else {
+                aumentarSalud(-5);
+            }// enferma si se empacha
         }
         if (!estasEnfermo()) { // solo gana peso si está sano
             ganarPeso(1);
@@ -201,6 +214,7 @@ public class RatoncitoFiuFiu {
             aumentarEnergia(-ENERGIA_JUGAR);
             alimentar(-HAMBRE_JUGAR);
             modificarFelicidad(cantidadDiversion);
+            setJugar(true);
             return true;
         }
     }
