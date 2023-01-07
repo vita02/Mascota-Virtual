@@ -15,9 +15,9 @@ public class RatoncitoFiuFiu {
     private boolean dormido;
     private boolean jugando;
     static Random rn = new Random();
-    private static final int INFANCIA = rn.nextInt((2600 - 2400)) + 2400; //2500;
-    private static final int ADULTA = rn.nextInt((8100 - 7900)) + 7900; //8000;
-    private static final int VEJEZ = rn.nextInt((13500 - 13300)) + 13300; //13450;
+    private static final int INFANCIA = 10;//rn.nextInt((2600 - 2400)) + 2400; //2500;
+    private static final int ADULTA = 20;//rn.nextInt((8100 - 7900)) + 7900; //8000;
+    private static final int VEJEZ = 100;//rn.nextInt((13500 - 13300)) + 13300; //13450;
     private static final int MIN_PESO = 5;
     private static final int MAXIMO_ENERGIA_DORMIR = 75;
     private static final int MINIMO_ENERGIA_DORMIR = 40;
@@ -55,7 +55,7 @@ public class RatoncitoFiuFiu {
         sb.append("\nSalud: ").append(salud);
         sb.append("\nEnergía: ").append(energia);
         sb.append("\nFelicidad: ").append(felicidad);
-        //sb.append("\nEdad: ").append(edad);
+        sb.append("\nEdad: ").append(edad);
         return sb.toString();
     }
 

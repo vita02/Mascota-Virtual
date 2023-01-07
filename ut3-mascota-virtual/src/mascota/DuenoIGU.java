@@ -73,8 +73,8 @@ public class DuenoIGU extends JFrame {
                     ruta2 = rutaImagenes + "/muerto.gif";
                     labelSalida.setText(mascota.getName() + " ha muerto...");
                 } else if (jugando) {
-                    ruta1 = rutaImagenes + "/jugar.png";
-                    ruta2 = rutaImagenes + "/jugar.png";
+                    ruta1 = rutaImagenes + "/jugar-" + tramoEdad.toString() + "-00.png";
+                    ruta2 = rutaImagenes + "/jugar-" + tramoEdad.toString() + "-01.png";
                     labelSalida.setText("Jugando");
                     mascota.setJugar(false);
                 } else if (!mascota.tienesQuejas() || enfermo) {
