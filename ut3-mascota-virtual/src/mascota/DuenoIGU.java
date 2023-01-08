@@ -24,7 +24,9 @@ public class DuenoIGU extends JFrame {
     private JButton botonJugar = new JButton();
     private TitledBorder titledBorder1;
     private JSplitPane jSplitPane1 = new JSplitPane();
+    private JSplitPane jSplitPaneText = new JSplitPane();
     private JLabel labelGrafica = new JLabel();
+    private JTextArea labelEstadisticas = new JTextArea();
     private JTextArea labelSalida = new JTextArea();
     private TitledBorder titledBorder2;
 
@@ -32,6 +34,7 @@ public class DuenoIGU extends JFrame {
     private Timer temporizador;
     private long horaActual, horaAnterior;
     private boolean estadoAnimacion = true;
+    private boolean estadisticasVisibles = true;
 
     class Envejecimiento extends TimerTask {
         RatoncitoFiuFiu mascota;
@@ -116,7 +119,7 @@ public class DuenoIGU extends JFrame {
                         ruta2 = rutaImagenes + "/quejarse-" + tramoEdad.toString() + "-01.gif";
                         labelSalida.setText("Tengo hambre!");
                     }
-                    if (enfermo){
+                    if (enfermo) {
 
                     }
                 }
@@ -158,6 +161,10 @@ public class DuenoIGU extends JFrame {
             if (System.currentTimeMillis() - horaAnterior >= 1000 && mascota.tienesQuejas())
                 hazmeCaso();
             animacion();
+
+            if (estadisticasVisibles) {
+                labelEstadisticas.setText(mascota.estadisticas());
+            }
         }
     }
 
@@ -192,7 +199,7 @@ public class DuenoIGU extends JFrame {
         this.getContentPane().setBackground(Color.white);
         this.setSize(new Dimension(341, 337));
         this.setTitle("mascota.RatoncitoFiuFiu : ");
-        botonEstadisticas.setText("Estadisticas");
+        botonEstadisticas.setText("Ocultar estadísticas");
         botonEstadisticas.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 botonEstadisticas_mouseClicked(e);
@@ -227,20 +234,32 @@ public class DuenoIGU extends JFrame {
         jSplitPane1.setBottomComponent(labelGrafica);
         jSplitPane1.setContinuousLayout(true);
         jSplitPane1.setDividerSize(0);
+        jSplitPaneText.setOrientation((JSplitPane.HORIZONTAL_SPLIT));
+        jSplitPaneText.setBorder(null);
+        jSplitPaneText.setContinuousLayout(true);
+        jSplitPaneText.setDividerSize(0);
         labelGrafica.setBackground(Color.white);
         labelGrafica.setForeground(Color.white);
         labelGrafica.setHorizontalAlignment(SwingConstants.CENTER);
         labelGrafica.setHorizontalTextPosition(SwingConstants.CENTER);
         labelSalida.setEditable(false);
         labelSalida.setMargin(new Insets(5, 5, 5, 5));
+        labelEstadisticas.setEditable(false);
+        labelSalida.setMargin(new Insets(5, 5, 5, 5));
         jToolBar1.add(botonAlimentar, null);
         jToolBar1.add(botonCurar, null);
         jToolBar1.add(botonLimpiar, null);
-        jToolBar1.add(botonJugar, null); ///////////////
+        jToolBar1.add(botonJugar, null);
         jToolBar1.add(botonEstadisticas, null);
         contentPane.add(jSplitPane1, BorderLayout.CENTER);
+        contentPane.add(jSplitPaneText, BorderLayout.NORTH);
+        jSplitPaneText.add(labelEstadisticas, JSplitPane.LEFT);
+        jSplitPaneText.add(labelSalida, JSplitPane.RIGHT);
+        jSplitPaneText.setDividerLocation(120);
         jSplitPane1.add(labelGrafica, JSplitPane.RIGHT);
-        jSplitPane1.add(labelSalida, JSplitPane.LEFT);
+        //jSplitPane1.add(labelEstadisticas, JSplitPane.RIGHT);
+        //jSplitPane1.add(labelSalida, JSplitPane.LEFT);
+        jSplitPane1.add(jSplitPaneText, JSplitPane.LEFT);
         contentPane.add(jToolBar1, BorderLayout.SOUTH);
         jSplitPane1.setDividerLocation(140);
     }
@@ -273,12 +292,20 @@ public class DuenoIGU extends JFrame {
 
     void botonJugar_mouseClicked(MouseEvent e) {
         //Aquí jugamos con la mascota
-        mascota.jugar(15);
+        mascota.jugar(30);
     }
 
     void botonEstadisticas_mouseClicked(MouseEvent e) {
         //Aqu� pedimos estadisticas
-        labelSalida.setText(mascota.estadisticas());
+        if (estadisticasVisibles) {
+            botonEstadisticas.setText("Mostrar estadísticas");
+            labelEstadisticas.setText("");
+            estadisticasVisibles = false;
+        } else {
+            botonEstadisticas.setText("Ocultar estadísticas");
+            labelEstadisticas.setText(mascota.estadisticas());
+            estadisticasVisibles = true;
+        }
         horaAnterior = System.currentTimeMillis();
     }
 

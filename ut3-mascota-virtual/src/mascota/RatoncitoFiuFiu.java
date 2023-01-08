@@ -15,14 +15,19 @@ public class RatoncitoFiuFiu {
     private boolean dormido;
     private boolean jugando;
     static Random rn = new Random();
-    private static final int INFANCIA = 10;//rn.nextInt((2600 - 2400)) + 2400; //2500;
-    private static final int ADULTA = 20;//rn.nextInt((8100 - 7900)) + 7900; //8000;
-    private static final int VEJEZ = 100;//rn.nextInt((13500 - 13300)) + 13300; //13450;
+    private static final int INFANCIA = rn.nextInt((2600 - 2400)) + 2400; //2500;
+    private static final int ADULTA = rn.nextInt((8100 - 7900)) + 7900; //8000;
+    private static final int VEJEZ = rn.nextInt((13500 - 13300)) + 13300; //13450;
     private static final int MIN_PESO = 5;
-    private static final int MAXIMO_ENERGIA_DORMIR = 75;
+    private static final int CANTIDAD_ALIMENTO_ANCIANO = 10;
+    private static final int CANTIDAD_ALIMENTO_NIÑO = 15;
+    private static final int CANTIDAD_ALIMENTO_ADULTO = 20;
+    private static final int MAXIMO_ENERGIA_DORMIR_NIÑO = 90;
+    private static final int MAXIMO_ENERGIA_DORMIR_ADULTO = 80;
+    private static final int MAXIMO_ENERGIA_DORMIR_ANCIANO = 75;
     private static final int MINIMO_ENERGIA_DORMIR = 40;
     private static final int RITMO_ENVEJECIMIENTO = 1;
-    private static final int ENERGIA_JUGAR = 10;
+    private static final int ENERGIA_JUGAR = 5;
     private static final int SALUD_ALIMENTAR = 10;
     private static final int LIMITE_HAMBRE = 10;
     private static final int LIMITE_SALUD = 90;
@@ -70,11 +75,6 @@ public class RatoncitoFiuFiu {
     }
 
     public boolean estasDormido() {
-        if (energia <= MINIMO_ENERGIA_DORMIR) {
-            dormido = true;
-        } else if (energia >= MAXIMO_ENERGIA_DORMIR) {
-            dormido = false;
-        }
         return dormido;
     }
 
@@ -115,25 +115,38 @@ public class RatoncitoFiuFiu {
     }
 
     public void envejecer(int segundos) {
+        // EDAD
         edad += segundos;
+        // PESO
         ganarPeso(-RITMO_ENVEJECIMIENTO);
         if (estasEnfermo()) {
             ganarPeso(-RITMO_ENVEJECIMIENTO);
         } // si está enferma pierde más peso
+        // HAMBRE
         alimentar(-RITMO_ENVEJECIMIENTO);
+        // SUCIEDAD
         modificarSuciedad(RITMO_ENVEJECIMIENTO);
+        // SALUD
         aumentarSalud(-RITMO_ENVEJECIMIENTO);
-        if (estasSucio()){
+        if (estasSucio()) { // si está sucia enferma más rápido
             aumentarSalud(-RITMO_ENVEJECIMIENTO);
-        } // si está sucia enferma más rápido
+        }
+        if (queTramoEdad() == 2){
+            aumentarSalud(-RITMO_ENVEJECIMIENTO);
+        }
+        // ENERGIA
         if (estasDormido()) {
             aumentarEnergia(RITMO_ENVEJECIMIENTO);
         } else {
             aumentarEnergia(-RITMO_ENVEJECIMIENTO);
         }
-        if (tienesQuejas() || estasEnfermo()) {
+        // FELICIDAD
+        if ((tienesQuejas() || estasEnfermo()) && estasFeliz()) { // si esta sucia o enferma no puede ser feliz
             deprimir();
-        } // si esta sucia o enferma no puede ser feliz
+        }
+        if (!estasDormido()) {
+            modificarFelicidad(-RITMO_ENVEJECIMIENTO);
+        }
     }
 
     private void deprimir() {
@@ -142,6 +155,13 @@ public class RatoncitoFiuFiu {
 
 
     public void alimentar(float cantidadAlimento) {
+        if (cantidadAlimento > 0) {
+            switch (queTramoEdad()) {
+                case 0 -> cantidadAlimento = CANTIDAD_ALIMENTO_NIÑO;
+                case 1 -> cantidadAlimento = CANTIDAD_ALIMENTO_ADULTO;
+                default -> cantidadAlimento = CANTIDAD_ALIMENTO_ANCIANO;
+            }
+        }
         if (tieneHambre() && cantidadAlimento > 0) { // mejora su salud si come con hambre
             aumentarSalud(SALUD_ALIMENTAR);
         }
@@ -179,10 +199,25 @@ public class RatoncitoFiuFiu {
 
     private void aumentarEnergia(float cantidad) {
         energia += cantidad;
-        if (energia <= 50) {
+        if (energia <= MINIMO_ENERGIA_DORMIR) {
             dormido = true;
-        } else if (energia >= 75) {
-            dormido = false;
+        } else {
+            switch (queTramoEdad()) {
+                case 0:
+                    if (energia >= MAXIMO_ENERGIA_DORMIR_NIÑO) {
+                        dormido = false;
+                    }
+                    break;
+                case 1:
+                    if (energia >= MAXIMO_ENERGIA_DORMIR_ADULTO) {
+                        dormido = false;
+                    }
+                    break;
+                case 2:
+                    if (energia >= MAXIMO_ENERGIA_DORMIR_ANCIANO) {
+                        dormido = false;
+                    }
+            }
         }
     }
 
@@ -231,7 +266,7 @@ public class RatoncitoFiuFiu {
     }
 
     public boolean jugar(float cantidadDiversion) {
-        if (estasDormido() || !estasFeliz() || estasEnfermo()) {
+        if (estasDormido() || estasEnfermo()) {
             return false;
         } else {
             aumentarEnergia(-ENERGIA_JUGAR);
