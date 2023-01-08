@@ -51,12 +51,13 @@ public class DuenoIGU extends JFrame {
             Integer tramoEdad = mascota.queTramoEdad();
             String rutaImagenes;
             URL URLruta1, URLruta2;
-            boolean despierto, sucio, enfermo, despiertoSucio, despiertoEnfermo, despiertoEnfermoSucio, dormido, dormidoSucio, dormidoEnfermo, dormidoEnfermoSucio, muerto, jugando;
+            boolean despierto, sucio, enfermo, despiertoSucio, despiertoEnfermo, despiertoEnfermoSucio, dormido, dormidoSucio, dormidoEnfermo, dormidoEnfermoSucio, muerto, jugando, triste;
 
             despierto = !mascota.estasDormido();
             dormido = !despierto;
             enfermo = mascota.estasEnfermo();
             sucio = mascota.estasSucio();
+            triste = !mascota.estasFeliz();
             despiertoSucio = despierto && sucio;
             despiertoEnfermo = despierto && enfermo;
             despiertoEnfermoSucio = despiertoSucio && despiertoEnfermo;
@@ -80,7 +81,7 @@ public class DuenoIGU extends JFrame {
                     ruta2 = rutaImagenes + "/jugar-" + tramoEdad.toString() + "-01.png";
                     labelSalida.setText("Jugando");
                     mascota.setJugar(false);
-                } else if (!mascota.tienesQuejas() || enfermo) {
+                } else if (!mascota.tienesQuejas() || enfermo || triste) {
                     if (despiertoEnfermoSucio) {
                         labelSalida.setText("Estoy malito...");
                         ruta1 = rutaImagenes + "/despierto-enfermo-sucio-" + tramoEdad.toString() + "-00.gif";
@@ -92,9 +93,6 @@ public class DuenoIGU extends JFrame {
                         labelSalida.setText("Estoy malito...");
                         ruta1 = rutaImagenes + "/despierto-enfermo-" + tramoEdad.toString() + "-00.gif";
                         ruta2 = rutaImagenes + "/despierto-enfermo-" + tramoEdad.toString() + "-01.gif";
-                    } else if (despierto) {
-                        ruta1 = rutaImagenes + "/despierto-" + tramoEdad.toString() + "-00.gif";
-                        ruta2 = rutaImagenes + "/despierto-" + tramoEdad.toString() + "-01.gif";
                     } else if (dormidoEnfermoSucio) {
                         ruta1 = rutaImagenes + "/dormido-enfermo-sucio-" + tramoEdad.toString() + "-00.gif";
                         ruta2 = rutaImagenes + "/dormido-enfermo-sucio-" + tramoEdad.toString() + "-01.gif";
@@ -108,6 +106,13 @@ public class DuenoIGU extends JFrame {
                     } else if (dormido) {
                         ruta1 = rutaImagenes + "/dormido-" + tramoEdad.toString() + "-00.gif";
                         ruta2 = rutaImagenes + "/dormido-" + tramoEdad.toString() + "-01.gif";
+                    } else if (triste) {
+                        ruta1 = rutaImagenes + "/triste-" + tramoEdad.toString() + "-00.png";
+                        ruta2 = rutaImagenes + "/triste-" + tramoEdad.toString() + "-01.png";
+                        labelSalida.setText("Estoy triste...");
+                    } else if (despierto) {
+                        ruta1 = rutaImagenes + "/despierto-" + tramoEdad.toString() + "-00.gif";
+                        ruta2 = rutaImagenes + "/despierto-" + tramoEdad.toString() + "-01.gif";
                     }
                 } else {
                     if (sucio) {
@@ -118,9 +123,6 @@ public class DuenoIGU extends JFrame {
                         ruta1 = rutaImagenes + "/quejarse-" + tramoEdad.toString() + "-00.gif";
                         ruta2 = rutaImagenes + "/quejarse-" + tramoEdad.toString() + "-01.gif";
                         labelSalida.setText("Tengo hambre!");
-                    }
-                    if (enfermo) {
-
                     }
                 }
 
@@ -171,7 +173,7 @@ public class DuenoIGU extends JFrame {
     //Construir el marco
     public DuenoIGU() {
         String nombre = "Ratatouille";
-        mascota = new RatoncitoFiuFiu(nombre, 50, (byte) 50, (byte) 50, (byte) 40, (byte) 100, (byte) 100);
+        mascota = new RatoncitoFiuFiu(nombre, 50, (byte) 50, (byte) 50, (byte) 100, (byte) 100, (byte) 100);
         labelSalida.setText("Hola! Soy " + nombre);
         temporizador = new Timer();
         temporizador.schedule(new Envejecimiento(mascota, labelGrafica), 0, 500);
@@ -257,8 +259,6 @@ public class DuenoIGU extends JFrame {
         jSplitPaneText.add(labelSalida, JSplitPane.RIGHT);
         jSplitPaneText.setDividerLocation(120);
         jSplitPane1.add(labelGrafica, JSplitPane.RIGHT);
-        //jSplitPane1.add(labelEstadisticas, JSplitPane.RIGHT);
-        //jSplitPane1.add(labelSalida, JSplitPane.LEFT);
         jSplitPane1.add(jSplitPaneText, JSplitPane.LEFT);
         contentPane.add(jToolBar1, BorderLayout.SOUTH);
         jSplitPane1.setDividerLocation(140);

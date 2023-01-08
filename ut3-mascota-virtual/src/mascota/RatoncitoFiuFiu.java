@@ -104,7 +104,7 @@ public class RatoncitoFiuFiu {
      * La felicidad no varía con el tiempo en sí, sino en función de los demás atributos.
      */
     public boolean estasFeliz() {
-        return felicidad >= 40;
+        return felicidad >= 30;
     }
 
     /**
@@ -176,16 +176,16 @@ public class RatoncitoFiuFiu {
             }
         }
 
-        if (hambre + cantidadAlimento <= LIMITE_HAMBRE) {
-            hambre = 0;
+        if (hambre - cantidadAlimento <= LIMITE_HAMBRE) {
             if (salud > 20) {
                 salud = 20;
             } else {
-                aumentarSalud(-5);
-            }// enferma si se empacha
+                aumentarSalud(-3); // enferma si se empacha
+            }
         }
-        if (!estasEnfermo()) { // solo gana peso si está sano
+        if (!estasEnfermo() && cantidadAlimento > 0) { // solo gana peso si está sano
             ganarPeso(1);
+            modificarFelicidad(3);
         }
     }
 
@@ -227,12 +227,12 @@ public class RatoncitoFiuFiu {
      * @param pn positivo o negativo (para poder ser invocado tanto desde envejecer como desde almientar)
      */
     private void ganarPeso(int pn) {
-        int cantidad = rn.nextInt((3 - 1) + 1) + 1;
+        int cantidad = rn.nextInt(20) + 6;
         if (pn > 0) {
             peso += cantidad;
         } else {
-            if (peso - cantidad >= MIN_PESO) {
-                peso -= cantidad;
+            if (peso - 1 >= MIN_PESO) {
+                peso -= 1;
             } else {
                 peso = MIN_PESO;
             }
